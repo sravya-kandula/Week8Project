@@ -1,39 +1,34 @@
-import React from 'react'
-import { createBrowserRouter } from 'react-router'
-import UsersList from './components/UsersList'
+import React from "react";
+import { createBrowserRouter, RouterProvider } from "react-router";
+
+import RootLayout from "./components/RootLayout";
+import UsersList from "./components/UsersList";
+import User from "./components/User";
+import AddUser from "./components/AddUser";
 
 function App() {
   const routerObj = createBrowserRouter([
     {
-      path:"/",
-      element:<RootLayout />,
-      children:[
+      path: "/",
+      element: <RootLayout />,
+      children: [
         {
-          path:"header",
-          element:<Header/>,
-          children:[
-            {
-          path:"userlist",
-          element:<UsersList/>
+          path: "users-list",
+          element: <UsersList />,
         },
         {
-          path:"user",
-          element:<User/>
+          path: "user",
+          element: <User />,
         },
         {
-          path:"adduser",
-          element:<AddUser/>
-        }
+          path: "add-user",
+          element: <AddUser />,
+        },
+      ],
+    },
+  ]);
 
-          ]
-        },
-        
-      ]
-    }
-  ])
-  return (
-    <div>App</div>
-  )
+  return <RouterProvider router={routerObj} />;
 }
 
-export default App
+export default App;

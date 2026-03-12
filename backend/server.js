@@ -1,46 +1,45 @@
-// create http server
 import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import cors from "cors";
 
-// configure dotenv
+import userApi from "./APIs/UserApi.js";
+
 dotenv.config();
 
-// create express app
 const app = express();
 
-// body parser middleware
+app.use(cors());
 app.use(express.json());
 
-// sample route (you can replace this with UserApp later)
+/* CONNECT ROUTES */
+app.use("/user-api", userApi);
+
 app.get("/", (req, res) => {
-    res.send("Server is running...");
+  res.send("User Management Server Running");
 });
 
-// connect to database
 async function connectDB() {
-    try {
-        await mongoose.connect(process.env.DB_URL);
-        console.log("Database connected successfully");
+  try {
+    await mongoose.connect(process.env.DB_URL);
+    console.log("Database connected successfully");
 
-        const port = process.env.PORT || 8000;
+    const port = process.env.PORT || 4000;
 
-        app.listen(port, () => {
-            console.log(`Server running on port ${port}`);
-        });
+    app.listen(port, () => {
+      console.log(`Server running on port ${port}`);
+    });
 
-    } catch (error) {
-        console.error("Database connection failed", error.message);
-        process.exit(1);
-    }
+  } catch (error) {
+    console.error("Database connection failed", error.message);
+  }
 }
 
-// error handling middleware
+/* ERROR HANDLER */
 app.use((err, req, res, next) => {
-    res.status(err.status || 500).json({
-        message: err.message,
-    });
+  res.status(err.status || 500).json({
+    message: err.message,
+  });
 });
 
-// call database connection function
 connectDB();
