@@ -5,21 +5,31 @@ import RootLayout from "./components/RootLayout";
 import UsersList from "./components/UsersList";
 import User from "./components/User";
 import AddUser from "./components/AddUser";
+import Home from "./components/Home";
 
 function App() {
+
   const routerObj = createBrowserRouter([
     {
       path: "/",
       element: <RootLayout />,
       children: [
+
+        {
+          index: true,
+          element: <Home />,
+        },
+
         {
           path: "users-list",
           element: <UsersList />,
         },
+
         {
           path: "user",
           element: <User />,
         },
+
         {
           path: "add-user",
           element: <AddUser />,
