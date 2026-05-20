@@ -1,68 +1,86 @@
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router";
 
 function AddUser() {
-  const [user, setUser] = useState({
-    name: "",
-    email: "",
-    dateOfBirth: "",
-    mobileNumber: "",
-  });
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const handleChange = (e) => {
-    setUser({ ...user, [e.target.name]: e.target.value });
+  const navigate = useNavigate();
+
+  const onUserCreate = async (newUser) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch(
+        "https://atpassignments.onrender.com/user-api/users",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(newUser),
+        },
+      );
+
+      if (res.status === 201) {
+        // Navigate to UsersList and trigger refresh
+        navigate("/users-list", { state: { refresh: true } });
+      } else {
+        const errMsg = await res.text();
+        throw new Error(errMsg || "Error adding user");
+      }
+    } catch (err) {
+      console.log(err);
+      setError(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    await fetch("http://localhost:4000/user-api/create-user", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(user),
-    });
-
-    alert("User Added Successfully");
-  };
+  if (loading)
+    return <p className="text-center text-orange-400 text-3xl">Loading...</p>;
+  if (error)
+    return <p className="text-center text-red-400 text-3xl">{error.message}</p>;
 
   return (
-    <div className="flex justify-center mt-20">
+    <div className="text-center">
+      <h1 className="text-5xl text-gray-600">Add New User</h1>
       <form
-        onSubmit={handleSubmit}
-        className="flex flex-col gap-4 p-10 shadow-xl rounded-xl w-[350px]"
+        onSubmit={handleSubmit(onUserCreate)}
+        className="max-w-96 mx-auto mt-10"
       >
-        <h1 className="text-2xl text-center text-lime-600">Add User</h1>
-
         <input
-          name="name"
+          type="text"
+          {...register("name", { required: true })}
+          className="mb-5 border w-full text-2xl p-2"
           placeholder="Name"
-          onChange={handleChange}
-          className="border p-2"
         />
-
         <input
-          name="email"
+          type="email"
+          {...register("email", { required: true })}
+          className="mb-5 border w-full text-2xl p-2"
           placeholder="Email"
-          onChange={handleChange}
-          className="border p-2"
         />
-
         <input
           type="date"
-          name="dateOfBirth"
-          onChange={handleChange}
-          className="border p-2"
+          {...register("dateOfBirth", { required: true })}
+          className="mb-5 border w-full text-2xl p-2"
+          placeholder="Date of Birth"
         />
-
         <input
-          name="mobileNumber"
+          type="number"
+          {...register("mobileNumber", { required: true })}
+          className="mb-5 border w-full text-2xl p-2"
           placeholder="Mobile Number"
-          onChange={handleChange}
-          className="border p-2"
         />
-
-        <button className="bg-lime-500 text-white p-2 rounded">
+        <button
+          type="submit"
+          className="text-2xl bg-lime-400 text-white px-8 py-4 rounded"
+        >
           Add User
         </button>
       </form>
