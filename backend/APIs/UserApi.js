@@ -1,86 +1,66 @@
-import express from "express";
-import User from "../Models/UserModel.js";
+//create mini-express App
+import express from "express"
+import {userModel} from "../Models/UserModel.js"
+const userRoute=express.Router()
+//USER API ROUTES
+//create User
+userRoute.post("/users",async(req,res)=>{
+     let newUser=req.body
+     let newUserDoc=new userModel(newUser)
+    let user=await newUserDoc.save()
+    //send res
+    res.status(201).json({message:"user created",payload:user})
 
-const userApi = express.Router();
+})
+//Read all users
+userRoute.get("/users",async(req,res)=>{
+    //read users from DB
+    let users=await userModel.find({status:true})
+    //send res
+    res.status(200).json({message:"users",payload:users})
+})
 
-/* CREATE USER */
-userApi.post("/create-user", async (req, res, next) => {
-  try {
-    const newUser = await User.create(req.body);
+//Read user by id
+userRoute.get("/users/:id",async(req,res)=>{
+    let objId=req.params.id
+      
+      //find user in db
+      let userObj=await userModel.findById({_id:objId,status:true})
+      //check user
+      if(!userObj)
+        return res.status(404).json({message:"user not found"})
+      //send res
+      res.status(200).json({message:"user",payload:userObj})
+})
 
-    res.status(201).json({
-      message: "User created successfully",
-      payload: newUser,
-    });
-  } catch (err) {
-    next(err);
-  }
-});
-
-/* GET ALL USERS */
-userApi.get("/users", async (req, res, next) => {
-  try {
-    const users = await User.find();
-
-    res.json({
-      message: "All users fetched",
-      payload: users,
-    });
-  } catch (err) {
-    next(err);
-  }
-});
-
-/* GET USER BY ID */
-userApi.get("/users/:id", async (req, res, next) => {
-  try {
-    const user = await User.findById(req.params.id);
-
-    if (!user) {
-      return res.status(404).json({
-        message: "User not found",
-      });
+//Delete a User by iD
+userRoute.delete("/users/:id",async(req,res)=>{
+    let objId=req.params.id
+    //delete user by id
+    let deletedUser=await userModel.findByIdAndUpdate(objId,{$set:{status:false}})
+    if(!deletedUser){
+        return res.status(404).json({message:"user not found"})
     }
+    res.status(200).json({message:"user deleted"})
 
-    res.json({
-      message: "User found",
-      payload: user,
-    });
-  } catch (err) {
-    next(err);
-  }
-});
+})
+//Update user by id
 
-/* UPDATE USER */
-userApi.put("/users/:id", async (req, res, next) => {
-  try {
-    const updatedUser = await User.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true }
-    );
+//Activate User(change status to true)
+//PUT(complete change) & PATCH(partial change)
 
-    res.json({
-      message: "User updated",
-      payload: updatedUser,
-    });
-  } catch (err) {
-    next(err);
-  }
-});
+userRoute.patch("/users/:id",async(req,res)=>{
+    let objId=req.params.id
+    //delete user by id
+    let user=await userModel.findByIdAndUpdate(objId,{$set:{status:true}},{new:true})
+    //send res
+    res.status(200).json({message:"user activated",payload:user})
 
-/* DELETE USER */
-userApi.delete("/users/:id", async (req, res, next) => {
-  try {
-    const deletedUser = await User.findByIdAndDelete(req.params.id);
+})
 
-    res.json({
-      message: "User deleted",
-      payload: deletedUser,
-    });
-  } catch (err) {
-    next(err);
-  }
-});
 
-export default userApi;
+export default userRoute
+
+
+
+
