@@ -2,13 +2,11 @@ import React from 'react'
 
 function Home() {
 
-  const texts = [
-    "Welcome to Home Page",
-    "React + Vite Project",
-    "Beautiful Animated Cards",
-    "Frontend Development",
-    "Modern UI Design",
-    "Creative Web Experience"
+  const users = [
+    "User Management System",
+    "Add Users Easily",
+    "View Users List",
+    "Modern React Application"
   ]
 
   return (
@@ -16,53 +14,57 @@ function Home() {
       style={{
         minHeight: "100vh",
         background: "linear-gradient(to right, #4f46e5, #9333ea)",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
         padding: "40px",
-        fontFamily: "Arial"
+        textAlign: "center",
+        color: "white"
       }}
     >
       <h1
         style={{
-          color: "white",
-          fontSize: "45px",
-          marginBottom: "40px",
+          fontSize: "48px",
+          marginBottom: "15px",
           fontWeight: "bold"
         }}
       >
-        Home
+        Welcome to the Home Page
       </h1>
+
+      <p
+        style={{
+          fontSize: "20px",
+          marginBottom: "40px"
+        }}
+      >
+        You can add users here in a beautiful way.
+      </p>
 
       <div
         style={{
           display: "flex",
+          justifyContent: "center",
           gap: "25px",
-          flexWrap: "wrap",
-          justifyContent: "center"
+          flexWrap: "wrap"
         }}
       >
-        {texts.map((text, index) => (
+        {users.map((item, index) => (
           <div
             key={index}
             style={{
               width: "250px",
               height: "140px",
               background: "white",
+              color: "#4f46e5",
               borderRadius: "20px",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              textAlign: "center",
-              fontSize: "20px",
+              fontSize: "22px",
               fontWeight: "bold",
-              color: "#4f46e5",
               boxShadow: "0 8px 20px rgba(0,0,0,0.2)",
-              transition: "0.4s",
               animation: "float 3s ease-in-out infinite"
             }}
           >
-            {text}
+            {item}
           </div>
         ))}
       </div>
@@ -79,10 +81,6 @@ function Home() {
             100% {
               transform: translateY(0px);
             }
-          }
-
-          div:hover {
-            transform: scale(1.05);
           }
         `}
       </style>
